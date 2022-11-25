@@ -30,3 +30,7 @@ void FileObserver::update(bool exist, bool new_exist, int size, int new_size) //
     }
 }
 
+FSubject::FSubject(QString path) //контруктор, входной параметр путь к файлу
+{
+    this->file_path = path; //присваиваем полю file_path переданное значение
+}
