@@ -60,3 +60,10 @@ void FSubject::attach(Observer *obs) //метод для добавления н
 {
     list.push_back(obs); //используем стандартный метод push_back для добавления значения в вектор list
 }
+
+void FSubject::detach(Observer *obs) //метод удаления наблюдателя из вектора
+{
+    list.erase(std::find(list.begin(), list.end(), obs));
+    //находим позицию наблюдателя obs в векторе list с помощью метода find
+    //затем используем метод erase и передаем туда позицию, для удаления этого наблюдателя
+}
