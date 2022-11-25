@@ -1,3 +1,5 @@
+#include <QFile>
+
 #include "observer.h"
 
 FileObserver::FileObserver() //конструктор
@@ -33,4 +35,14 @@ void FileObserver::update(bool exist, bool new_exist, int size, int new_size) //
 FSubject::FSubject(QString path) //контруктор, входной параметр путь к файлу
 {
     this->file_path = path; //присваиваем полю file_path переданное значение
+}
+
+bool FSubject::fileExist() //метод возвращающий значение bool - существует ли файл или нет
+{
+     if (QFile(this->file_path).exists()) //файл существует? используется стандартный метод библиотки QFile
+     {
+         return true;
+     }
+
+    return false;
 }
