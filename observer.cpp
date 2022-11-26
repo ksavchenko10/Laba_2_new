@@ -1,4 +1,6 @@
 #include <QFile>
+#include <stdio.h>
+#include <thread>
 
 #include "observer.h"
 
@@ -75,4 +77,19 @@ void FSubject::startNotify() //метод для постоянного набл
      this->notify(); //запускаем метод notify, для проверки состояния
      std::this_thread::sleep_for(std::chrono::milliseconds(100)); //пауза 100 миллисекуд
   }
+}
+
+void FSubject::notify() //метод проверки состояни и вызова методов update у наблюдателей
+{
+    bool new_exist = this->fileExist(); //вычисляем существует ли файл
+    int new_size = this->getSize(); //определяем размер файла
+
+    for (std::vector<Observer*>::const_iterator iter = list.begin(); iter != list.end(); ++iter) //проходим по всем наблюдателям из вектора list
+    {
+        (*iter)->update(this->file_exist, new_exist, this->file_size, new_size);
+        //вызываем метод update у каждого наблюдателя и передаем туда параметры
+    }
+
+    this->file_exist = new_exist; //запоминаем новое значение существования файла
+    this->file_size = new_size; //запоминаем новый размер файла
 }
