@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     FileObserver obs; //создаем экземпляр наблюдателя
-    FSubject file("test.txt"); //создаем экзепляр состояния файла
+    FileSubject file("test.txt"); //создаем экзепляр состояния файла
 
     file.attach(&obs); //добавляем наблюдателя к экземпляру состояния файла
 
