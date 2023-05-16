@@ -7,10 +7,23 @@
 
 FileObserver::FileObserver() //конструктор
 {
-    exist = false;
+    //exist = false;
 }
 
-void FileObserver::update(bool new_exist, int new_size) //переопределяем виртуальный метод родителя
+
+void FileObserver::createSlot(int size){
+    std::cout << "The file exists, the file is not empty. Size = " << size <<  " bytes" << std::endl;
+}
+
+void FileObserver::updateSlot(int size){
+     std::cout << "The file exists, the file has been modified. Size = " << size <<  " bytes" << std::endl;
+}
+
+void FileObserver::deleteSlot(){
+    std::cout << "File does not exist" << std::endl;
+}
+
+/*void FileObserver::update(bool new_exist, int new_size) //переопределяем виртуальный метод родителя
 {
     if (new_exist != exist) //изменилось существование
     {
@@ -28,7 +41,7 @@ void FileObserver::update(bool new_exist, int new_size) //переопредел
 
         std::cout << "The file exists, the file has been modified. Size = " << new_size <<  " bytes" << std::endl;
     }
-}
+}*/
 
 
 FileSubject::FileSubject(QString path) //контруктор, входной параметр путь к файлу
@@ -50,6 +63,7 @@ int FileSubject::getSize() //метод возвращающий размер ф
     return QFile(file_path).size(); //определяем размер файла в байтах
 }
 
+/*
 void FileSubject::attach(Observer *obs) //метод для добавления наблюдателя в вектор наблюдателей
 {
     list.push_back(obs); //используем стандартный метод push_back для добавления значения в вектор list
@@ -61,20 +75,23 @@ void FileSubject::detach(Observer *obs) //метод удаления наблю
     //находим позицию наблюдателя obs в векторе list с помощью метода find
     //затем используем метод erase и передаем туда позицию, для удаления этого наблюдателя
 }
+*/
 
 void FileSubject::notify() //метод проверки состояни и вызова методов update у наблюдателей
 {
     bool new_exist = this->fileExist(); //новое значение
     int new_size = this->getSize(); //новый размер
-    if  (new_exist != file_exist || new_size != file_size) {
-        file_exist = new_exist;
-        file_size = new_size;
-        for (std::vector<Observer*>::const_iterator iter = list.begin(); iter != list.end(); iter++) //проходим по всем наблюдателям из вектора list
-        {
-            (*iter)->update(file_exist, file_size);
-            //вызываем метод update у каждого наблюдателя и передаем туда параметры
+    if (new_exist != file_exist)  {
+        if (new_exist) {// файл был создан
+            emit createSignal(new_size);
+        } else { // файл был удален
+            emit deleteSignal();
         }
+    } else if (new_size != file_size) { //файл бывл изменен
+        emit updateSignal(new_size);
     }
+    file_exist = new_exist;
+    file_size = new_size;
 
 }
 
