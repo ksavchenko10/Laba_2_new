@@ -5,12 +5,12 @@
 
 #include "observer.h"
 
-FileObserver::FileObserver() //конструктор
+/*FileObserver::FileObserver() //конструктор
 {
-    //exist = false;
-}
+    exist = false;
+}*/
 
-
+// cлоты вывода сообщения
 void FileObserver::createSlot(int size){
     std::cout << "The file exists, the file is not empty. Size = " << size <<  " bytes" << std::endl;
 }
@@ -51,18 +51,6 @@ FileSubject::FileSubject(QString path) //контруктор, входной п
     file_size = 0;
 }
 
-bool FileSubject::fileExist() //метод возвращающий значение bool - существует ли файл или нет
-{
-    return QFile(file_path).exists(); //файл существует? используется стандартный метод библиотки QFile
-}
-
-int FileSubject::getSize() //метод возвращающий размер файла, равное количеству байт
-{
-    if (!fileExist())
-        return 0;
-    return QFile(file_path).size(); //определяем размер файла в байтах
-}
-
 /*
 void FileSubject::attach(Observer *obs) //метод для добавления наблюдателя в вектор наблюдателей
 {
@@ -77,29 +65,25 @@ void FileSubject::detach(Observer *obs) //метод удаления наблю
 }
 */
 
-void FileSubject::notify() //метод проверки состояни и вызова методов update у наблюдателей
-{
-    bool new_exist = this->fileExist(); //новое значение
-    int new_size = this->getSize(); //новый размер
-    if (new_exist != file_exist)  {
-        if (new_exist) {// файл был создан
-            emit createSignal(new_size);
-        } else { // файл был удален
-            emit deleteSignal();
-        }
-    } else if (new_size != file_size) { //файл бывл изменен
-        emit updateSignal(new_size);
-    }
-    file_exist = new_exist;
-    file_size = new_size;
-
-}
-
-void FileSubject::startNotify() //метод для постоянного наблюдения
+void FileSubject::notify() //метод для постоянного наблюдения
 {
   while(true) //бесконечный цикл
   {
-     this->notify(); //запускаем метод notify, для проверки состояния
-     std::this_thread::sleep_for(std::chrono::milliseconds(100)); //пауза 100 миллисекуд
+      bool new_exist = QFile(file_path).exists(); //новое значение существование файла
+      int new_size = 0; //новый размер
+      if (new_exist) //на каждой итерации цикла получаем новое текущее состояние файла и записываем его в new_exist
+          new_size = QFile(file_path).size();
+      if (new_exist != file_exist)  { //если состояние полученное на текущей итерации не равно состояние на предыдущей итерации, то состояние файла изменилось
+          if (new_exist) {// файл был создан
+              emit createSignal(new_size); //испускается сигнал
+          } else { // файл был удален
+              emit deleteSignal();
+          }
+      } else if (new_size != file_size) { //файл был изменен
+          emit updateSignal(new_size);
+      }
+      file_exist = new_exist;
+      file_size = new_size;
+      std::this_thread::sleep_for(std::chrono::milliseconds(100)); //пауза 100 миллисекуд
   }
 }

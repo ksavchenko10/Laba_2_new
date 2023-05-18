@@ -18,14 +18,14 @@ class FileObserver: public QObject //класс наследуемый от Obse
 //private:
 //    bool exist; //существование файла
 
-public slots:
+public slots: //слоты-обработчики
     void createSlot(int size);
     void updateSlot(int size);
     void deleteSlot();
 
-public:
+//public:
     //FileObserver();
-    //void update(bool new_exist, int new_size);
+    //void update(bool new_exist, int new_size); //переопределенный метод для вывода сообщения о состоянии файла
 };
 /*
 class Subject //абстрактный класс
@@ -47,7 +47,7 @@ private:
     bool file_exist; //существование файла
     int file_size; //размер файла
 
-signals:
+signals: //cигналы для передачи
     void createSignal(int size);
     void updateSignal(int size);
     void deleteSignal();
@@ -57,12 +57,8 @@ public:
 
     //void attach(Observer *obs); //метод для добавления наблюдателя в вектор
     //void detach(Observer *obs); //метод удаления наблюдателя из вектора
-    void notify();
 
-    bool fileExist(); //метод возвращающий значение существует файл или нет
-    int getSize(); //метод возвращающий значение размера файла в байтах
-
-    void startNotify(); //метод с бесконечным циклов, запускающий метод notify
+    void notify(); //метод с бесконечным циклом, следящий за файлом
 };
 
 #endif // OBSERVER_H
